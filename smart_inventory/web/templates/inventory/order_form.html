@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — Smart Inventory{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="form-card">
+                <h5 class="fw-bold mb-4"><i class="bi bi-cart-plus me-2 text-warning"></i>{{ title }}</h5>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Customer Selection -->
+                    <div class="mb-4">
+                        <label for="{{ form.customer.id_for_label }}" class="form-label fw-semibold">Customer</label>
+                        {{ form.customer }}
+                        {% if form.customer.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.customer.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Order Items -->
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-list-ul me-1"></i>Order Items
+                    </h6>
+
+                    {{ formset.management_form }}
+
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th style="width:120px">Quantity</th>
+                                    <th style="width:60px">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item_form in formset %}
+                                <tr>
+                                    <td>
+                                        {{ item_form.product }}
+                                        {% if item_form.product.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in item_form.product.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ item_form.quantity }}
+                                        {% if item_form.quantity.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in item_form.quantity.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ item_form.DELETE }}
+                                    </td>
+                                    {% if item_form.non_field_errors %}
+                                    <td colspan="3">
+                                        <div class="alert alert-danger py-1 mb-0">
+                                            {% for error in item_form.non_field_errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    </td>
+                                    {% endif %}
+                                    {{ item_form.id }}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in formset.non_form_errors %}{{ error }}<br>{% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button class="btn btn-warning text-dark" type="submit">
+                            <i class="bi bi-check-lg me-1"></i> Place Order
+                        </button>
+                        <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

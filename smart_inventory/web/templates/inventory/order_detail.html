@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.pk }} — Smart Inventory{% endblock %}
+{% block page_title %}Order #{{ order.pk }}{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="form-card">
+
+                <!-- Header -->
+                <div class="d-flex flex-wrap align-items-start justify-content-between mb-4">
+                    <div>
+                        <h5 class="fw-bold mb-1">
+                            <i class="bi bi-receipt me-2 text-warning"></i>Order #{{ order.pk }}
+                        </h5>
+                        <p class="text-muted mb-0">{{ order.order_date|date:"F d, Y — H:i" }}</p>
+                    </div>
+                    <span class="badge bg-success fs-6 px-3 py-2">${{ order.calculate_total|floatformat:2 }}</span>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="p-3 bg-light rounded-3 mb-4">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">Customer</small>
+                            <span class="fw-semibold">{{ order.customer.name }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">Email</small>
+                            <a href="mailto:{{ order.customer.email }}">{{ order.customer.email }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <h6 class="fw-bold mb-3"><i class="bi bi-list-ul me-1"></i>Items</h6>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td class="fw-semibold">{{ item.product.name }}</td>
+                                <td class="text-center">{{ item.quantity }}</td>
+                                <td class="text-end">${{ item.unit_price|floatformat:2 }}</td>
+                                <td class="text-end fw-semibold">${{ item.get_subtotal|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <td colspan="3" class="text-end fw-bold">Grand Total</td>
+                                <td class="text-end fw-bold fs-5 text-primary">${{ order.calculate_total|floatformat:2 }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Orders
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

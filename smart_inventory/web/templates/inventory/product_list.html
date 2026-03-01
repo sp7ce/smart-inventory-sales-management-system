@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Products — Smart Inventory{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="content-section">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h5 class="fw-bold mb-0"><i class="bi bi-box me-2 text-primary"></i>All Products</h5>
+        <a href="{% url 'product_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Add Product
+        </a>
+    </div>
+
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th class="text-end">Price</th>
+                        <th class="text-center">Stock</th>
+                        <th class="text-end">Stock Value</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in products %}
+                    <tr>
+                        <td class="text-muted">{{ p.pk }}</td>
+                        <td class="fw-semibold">
+                            <a href="{% url 'product_detail' p.pk %}" class="text-decoration-none">{{ p.name }}</a>
+                        </td>
+                        <td><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ p.category }}</span></td>
+                        <td class="text-end">${{ p.price|floatformat:2 }}</td>
+                        <td class="text-center">
+                            {% if p.quantity_in_stock == 0 %}
+                            <span class="badge badge-stock-out">Out</span>
+                            {% elif p.quantity_in_stock <= 10 %}
+                            <span class="badge badge-stock-low">{{ p.quantity_in_stock }}</span>
+                            {% else %}
+                            <span class="badge badge-stock-ok">{{ p.quantity_in_stock }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">${{ p.get_value_in_stock|floatformat:2 }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'product_update' p.pk %}" class="btn btn-sm btn-outline-primary btn-action" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'product_delete' p.pk %}" class="btn btn-sm btn-outline-danger btn-action" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No products yet. <a href="{% url 'product_create' %}">Add one</a>.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
